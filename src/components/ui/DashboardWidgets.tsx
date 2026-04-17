@@ -96,7 +96,7 @@ export function KPICard({ title, value, change, icon, color, subtitle, onClick }
 /*  Status Badge                                                       */
 /* ------------------------------------------------------------------ */
 interface StatusBadgeProps {
-  status: 'active' | 'pending' | 'completed' | 'cancelled' | 'preparing' | 'delivered' | 'new';
+  status: string;
   labelAr?: string;
   labelEn?: string;
 }
@@ -109,6 +109,8 @@ const statusStyles: Record<string, { bg: string; color: string; dot: string }> =
   preparing: { bg: '#F0F9FF', color: '#0284C7', dot: '#0EA5E9' },
   delivered: { bg: '#ECFDF5', color: '#059669', dot: '#10B981' },
   new: { bg: '#F5F3FF', color: '#7C3AED', dot: '#8B5CF6' },
+  APPROVED: { bg: '#ECFDF5', color: '#059669', dot: '#10B981' },
+  SUSPENDED: { bg: '#FFF7ED', color: '#D97706', dot: '#F59E0B' },
 };
 
 export function StatusBadge({ status, labelAr, labelEn }: StatusBadgeProps) {
@@ -121,6 +123,8 @@ export function StatusBadge({ status, labelAr, labelEn }: StatusBadgeProps) {
     preparing: { ar: 'قيد التحضير', en: 'Preparing' },
     delivered: { ar: 'تم التسليم', en: 'Delivered' },
     new: { ar: 'جديد', en: 'New' },
+    APPROVED: { ar: 'معتمد', en: 'Approved' },
+    SUSPENDED: { ar: 'محظور', en: 'Suspended' },
   };
 
   return (
