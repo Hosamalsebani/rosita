@@ -7,7 +7,7 @@ import {
   Users, UserPlus, Search, Edit2, Trash2, Mail, Phone,
   Stethoscope, Calendar, Clock, Star, Activity, MoreVertical,
   CheckCircle, XCircle, Shield, Briefcase, Plus, Filter,
-  ShieldCheck, Lock, Copy, Check, X, Download, Eye, EyeOff
+  ShieldCheck, Lock, Copy, Check, X, Download, Eye, EyeOff, FileText
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { 
