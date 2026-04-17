@@ -1,11 +1,12 @@
 'use server';
 
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import crypto from 'crypto';
 
 export async function fetchDoctorsServer() {
   try {
-    const { data: usersData, error: usersError } = await supabase
+    const { data: usersData, error: usersError } = await supabaseAdmin
       .from('User')
       .select('id, name, specialization, phone, email, createdAt, status, documents')
       .eq('role', 'DOCTOR');
@@ -14,7 +15,7 @@ export async function fetchDoctorsServer() {
       console.error("fetchDoctorsServer error detail:", usersError);
       // If column is missing, try a safer select
       if (usersError.message.includes('column "documents" does not exist')) {
-        const { data: fallbackData } = await supabase.from('User').select('id, name, specialization, phone, email, createdAt, status').eq('role', 'DOCTOR');
+        const { data: fallbackData } = await supabaseAdmin.from('User').select('id, name, specialization, phone, email, createdAt, status').eq('role', 'DOCTOR');
         return { success: true, data: fallbackData, columnMissing: true };
       }
       throw usersError;
@@ -166,7 +167,7 @@ export async function completeOnboardingAction(params: {
     if (!result.success) throw new Error(result.error);
 
     // 3. Update the User record with specialization and status
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('User')
       .update({
         specialization: params.specialization,
@@ -179,7 +180,7 @@ export async function completeOnboardingAction(params: {
     if (updateError) throw updateError;
 
     // 3.1 Update the DoctorProfile record with avatar, languages, and board status
-    const { error: profileError } = await supabase
+    const { error: profileError } = await supabaseAdmin
       .from('DoctorProfile')
       .update({
         avatarUrl: params.avatarUrl,

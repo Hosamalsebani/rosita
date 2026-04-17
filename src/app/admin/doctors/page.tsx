@@ -175,9 +175,11 @@ function DoctorsContent() {
           {/* View Documents Button */}
           <button 
             onClick={() => {
-              console.log("Doctor data for PDF check:", row);
+              console.log("Checking PDF for Doctor:", row.name);
+              console.log("Documents Data:", row.documents);
+              
               if (!row.documents || row.documents.length === 0) {
-                alert(lang === 'ar' ? `لا يوجد مستندات مرفوعة. (Documents array: ${JSON.stringify(row.documents)})` : `No docs. (${JSON.stringify(row.documents)})`);
+                alert(lang === 'ar' ? `لا يوجد مستندات مرفوعة. (قائمة الروابط فارغة)` : `No docs. (Data: ${JSON.stringify(row.documents)})`);
                 return;
               }
               // If multiple documents, open each one
