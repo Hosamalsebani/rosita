@@ -166,19 +166,6 @@ export async function completeOnboardingAction(params: {
 
     if (!result.success) throw new Error(result.error);
 
-    // 3. Update the User record with specialization and status
-    const { error: updateError } = await supabaseAdmin
-      .from('User')
-      .update({
-        specialization: params.specialization,
-        phone: params.phone,
-        status: 'APPROVED',
-        documents: params.documents || []
-      })
-      .eq('email', params.email);
-
-    if (updateError) throw updateError;
-
     // 3.1 Update the DoctorProfile record with avatar, languages, and board status
     const { error: profileError } = await supabaseAdmin
       .from('DoctorProfile')
