@@ -45,6 +45,7 @@ function DoctorsContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showCredentials, setShowCredentials] = useState<Doctor | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [columnMissing, setColumnMissing] = useState(false);
   
   // New Doctor Form State
   const [newName, setNewName] = useState('');
@@ -81,6 +82,9 @@ function DoctorsContent() {
         documents: u.documents || []
       }));
 
+      if (result.columnMissing) {
+        setColumnMissing(true);
+      }
       setDoctors(mappedDoctors);
     } catch (e: any) {
       console.error("Error fetching doctors:", e);
@@ -171,13 +175,19 @@ function DoctorsContent() {
           {/* View Documents Button */}
           <button 
             onClick={() => {
+              console.log("Doctor data for PDF check:", row);
               if (!row.documents || row.documents.length === 0) {
-                alert(lang === 'ar' ? 'لا يوجد مستندات مرفوعة لهذا الطبيب بعد.' : 'No documents uploaded for this doctor yet.');
+                alert(lang === 'ar' ? `لا يوجد مستندات مرفوعة. (Documents array: ${JSON.stringify(row.documents)})` : `No docs. (${JSON.stringify(row.documents)})`);
                 return;
               }
               // If multiple documents, open each one
               row.documents.forEach((docUrl: string) => {
-                if (docUrl) window.open(docUrl, '_blank');
+                if (docUrl) {
+                  const link = document.createElement('a');
+                  link.href = docUrl;
+                  link.target = '_blank';
+                  link.click();
+                }
               });
             }}
             title={lang === 'ar' ? 'عرض كافة المستندات (PDF)' : 'View All Documents (PDF)'}
@@ -265,6 +275,17 @@ function DoctorsContent() {
       </div>
 
       {/* Table Section */}
+      {/* Warning Banner for missing database column */}
+      {columnMissing && (
+        <div style={{ padding: '16px', borderRadius: '12px', background: '#FEF2F2', border: '1px solid #F87171', color: '#B91C1C', marginBottom: '24px', fontSize: '14px', lineHeight: '1.6' }}>
+          <strong>⚠️ تنبيه تقني:</strong> يبدو أنك لم تقم بإضافة عمود "المستندات" (documents) في جدول المستخدمين (User) بقاعدة البيانات. 
+          يرجى نسخ الكود التالي وتنفيذه في <strong>Supabase SQL Editor</strong> لتفعيل خاصية عرض الـ PDF:
+          <pre style={{ background: '#000', color: '#fff', padding: '12px', borderRadius: '8px', marginTop: '10px', overflowX: 'auto', fontSize: '12px' }}>
+            ALTER TABLE public."User" ADD COLUMN IF NOT EXISTS "documents" JSONB DEFAULT '[]';
+          </pre>
+        </div>
+      )}
+
       <DataTable
         columns={columns}
         data={doctors.filter(d => d.name.includes(searchTerm))}

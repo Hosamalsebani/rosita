@@ -7,10 +7,18 @@ export async function fetchDoctorsServer() {
   try {
     const { data: usersData, error: usersError } = await supabase
       .from('User')
-      .select('*')
+      .select('id, name, specialization, phone, email, createdAt, status, documents')
       .eq('role', 'DOCTOR');
 
-    if (usersError) throw usersError;
+    if (usersError) {
+      console.error("fetchDoctorsServer error detail:", usersError);
+      // If column is missing, try a safer select
+      if (usersError.message.includes('column "documents" does not exist')) {
+        const { data: fallbackData } = await supabase.from('User').select('id, name, specialization, phone, email, createdAt, status').eq('role', 'DOCTOR');
+        return { success: true, data: fallbackData, columnMissing: true };
+      }
+      throw usersError;
+    }
     return { success: true, data: usersData };
   } catch (error: any) {
     console.error("Server Action fetchDoctorsServer error:", error);
