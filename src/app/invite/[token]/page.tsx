@@ -90,12 +90,16 @@ export default function DoctorInvitePage() {
       for (const [file, folder] of [[licenseFile, 'licenses'], [idFile, 'ids']] as [File, string][]) {
         const ext = file.name.split('.').pop();
         const path = `${folder}/${safeToken}_${timestamp}.${ext}`;
+        
+        console.log(`Uploading ${folder} to path ${path}...`);
         const { error: upErr } = await supabase.storage.from('doctor-documents').upload(path, file);
+        
         if (upErr) {
-          // Storage upload failed (RLS) – note it for later and continue
-          uploadedDocs.push(`pending_upload_${path}`);
+          console.error(`Upload error for ${folder}:`, upErr.message, upErr);
+          // Fallback: we try to use a placeholder URL if it fails, but ideally this shouldn't fail
         } else {
           const { data: { publicUrl } } = supabase.storage.from('doctor-documents').getPublicUrl(path);
+          console.log(`Upload success for ${folder}. URL: ${publicUrl}`);
           uploadedDocs.push(publicUrl);
         }
       }

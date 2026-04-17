@@ -163,8 +163,8 @@ export async function completeOnboardingAction(params: {
       .update({
         specialization: params.specialization,
         phone: params.phone,
-        status: 'approved', // Invitations mean pre-approval
-        documents: params.documents
+        status: 'APPROVED',
+        documents: params.documents || []
       })
       .eq('email', params.email);
 
@@ -179,11 +179,10 @@ export async function completeOnboardingAction(params: {
           languages: params.languages || ['Arabic', 'English'],
           hasAmericanBoard: params.hasAmericanBoard || false,
         },
-        // Also update top level columns if we added them
         languages: params.languages || ['Arabic', 'English'],
         has_american_board: params.hasAmericanBoard || false,
       })
-      .eq('userId', result.data.id || result.data.user_id); // The RPC should return user id
+      .eq('userId', result.data.id || result.data.user_id);
 
     // Note: If DoctorProfile doesn't exist yet, it will be created by the app or trigger
     // But we try to update it here for immediate sync.
