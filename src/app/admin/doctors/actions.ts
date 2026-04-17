@@ -65,7 +65,8 @@ export async function inviteDoctorAction(params: {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24);
 
-    const inviteLink = `http://localhost:3000/invite/${token}`;
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const inviteLink = `${baseUrl}/invite/${token}`;
     
     const { data: inviteData, error: inviteError } = await supabase
       .from('Invitations')

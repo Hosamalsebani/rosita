@@ -52,6 +52,7 @@ Roshita is a world-class, cloud-based healthcare management platform designed to
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SITE_URL=your_hosted_website_url (e.g. https://rosita.vercel.app)
    ```
 
 4. Run the development server:
