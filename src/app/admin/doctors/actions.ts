@@ -65,7 +65,7 @@ export async function inviteDoctorAction(params: {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 24);
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const baseUrl = 'https://rosita-two.vercel.app';
     const inviteLink = `${baseUrl}/invite/${token}`;
     
     const { data: inviteData, error: inviteError } = await supabase
