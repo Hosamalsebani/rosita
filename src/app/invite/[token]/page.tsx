@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getInvitationAction } from '@/app/admin/doctors/actions';
+import { getInvitationAction, uploadFileSecurelyServer, completeOnboardingAction } from '@/app/admin/doctors/actions';
 import { MEDICAL_SPECIALIZATIONS } from '@/app/admin/doctors/specializations';
 import { 
   Stethoscope, 
@@ -86,8 +86,6 @@ export default function DoctorInvitePage() {
       const timestamp = Date.now();
       const safeToken = String(token).substring(0, 8);
       const uploadedDocs: string[] = [];
-
-      const { uploadFileSecurelyServer, completeOnboardingAction } = await import('@/app/admin/doctors/actions');
 
       for (const [file, folder] of [[licenseFile, 'licenses'], [idFile, 'ids']] as [File, string][]) {
         const ext = file.name.split('.').pop();
