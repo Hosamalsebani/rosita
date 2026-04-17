@@ -33,9 +33,9 @@ type Doctor = {
 }
 
 const initialDoctors: Doctor[] = [
-  { id: '1', name: 'د. محمود القاضي', specialty: 'طب أعصاب', phone: '091-8887766', medicalId: 'DOC-9921', joined: '2026-01-20', status: 'active' },
-  { id: '2', name: 'د. فاطمة الزهراء', specialty: 'طب أطفال', phone: '092-1112233', medicalId: 'DOC-4452', joined: '2026-03-12', status: 'active' },
-  { id: '3', name: 'د. خالد الورفلي', specialty: 'جراحة عامة', phone: '094-5554433', medicalId: 'DOC-7781', joined: '2026-04-01', status: 'pending' },
+  { id: '1', name: 'د. محمود القاضي', specialty: 'طب أعصاب', phone: '091-8887766', medicalId: 'DOC-9921', joined: '2026-01-20', status: 'active', documents: ['https://example.com/license.pdf'] },
+  { id: '2', name: 'د. فاطمة الزهراء', specialty: 'طب أطفال', phone: '092-1112233', medicalId: 'DOC-4452', joined: '2026-03-12', status: 'active', documents: ['https://example.com/id.pdf'] },
+  { id: '3', name: 'د. خالد الورفلي', specialty: 'جراحة عامة', phone: '094-5554433', medicalId: 'DOC-7781', joined: '2026-04-01', status: 'pending', documents: [] },
 ];
 
 function DoctorsContent() {
@@ -169,19 +169,27 @@ function DoctorsContent() {
       render: (row: any) => (
         <div style={{ display: 'flex', gap: 8 }}>
           {/* View Documents Button */}
-          {row.documents && row.documents.length > 0 && (
-            <button 
-              onClick={() => {
-                // Open first document as a shortcut or show list? For now just open first
-                const docUrl = row.documents[0];
+          <button 
+            onClick={() => {
+              if (!row.documents || row.documents.length === 0) {
+                alert(lang === 'ar' ? 'لا يوجد مستندات مرفوعة لهذا الطبيب بعد.' : 'No documents uploaded for this doctor yet.');
+                return;
+              }
+              // If multiple documents, open each one
+              row.documents.forEach((docUrl: string) => {
                 if (docUrl) window.open(docUrl, '_blank');
-              }}
-              title={lang === 'ar' ? 'عرض المستندات' : 'View Documents'}
-              style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#F0F9FF', color: '#0369A1', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              <FileText size={14} />
-            </button>
-          )}
+              });
+            }}
+            title={lang === 'ar' ? 'عرض كافة المستندات (PDF)' : 'View All Documents (PDF)'}
+            style={{ 
+              width: 32, height: 32, borderRadius: 8, border: 'none', 
+              background: (!row.documents || row.documents.length === 0) ? '#F1F5F9' : '#FEF2F2', 
+              color: (!row.documents || row.documents.length === 0) ? '#94A3B8' : '#DC2626', 
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' 
+            }}
+          >
+            <FileText size={14} />
+          </button>
 
           <button style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#F1F5F9', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Edit2 size={14} />
