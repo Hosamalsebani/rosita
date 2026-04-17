@@ -1,0 +1,439 @@
+.container {
+  min-height: 100vh;
+  background-color: #0F172A;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  overflow-y: auto;
+  font-family: var(--font-tajawal), sans-serif;
+  direction: rtl;
+}
+
+.backgroundEmblem {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40vw;
+  font-weight: 900;
+  color: #1E293B;
+  opacity: 0.3;
+  z-index: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+.blurOrbBlue {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 500px;
+  height: 500px;
+  background-color: rgba(37, 99, 235, 0.2);
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blurOrbIndigo {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 500px;
+  height: 500px;
+  background-color: rgba(79, 70, 229, 0.2);
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card {
+  max-width: 600px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 40px;
+  padding: 3rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 10;
+  margin: 2.5rem 0;
+}
+
+.logoBox {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #3B82F6, #4F46E5);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 0 auto 1.5rem auto;
+}
+
+.logoText {
+  font-size: 1.875rem;
+  font-weight: 900;
+  color: white;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #60A5FA;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.subtitle {
+  color: #94A3B8;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #CBD5E1;
+  margin-bottom: 0.5rem;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1rem;
+  color: white;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.input::placeholder {
+  color: #64748B;
+}
+
+.inputDisabled {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: #1E293B;
+  color: #64748B;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  width: 100%;
+  background: linear-gradient(to right, #2563EB, #4F46E5);
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+  margin-top: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: linear-gradient(to right, #1D4ED8, #4338CA);
+  transform: translateY(-2px);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.uploadBox {
+  border: 2px dashed #334155;
+  border-radius: 24px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.uploadBox:hover {
+  border-color: #3B82F6;
+}
+
+.uploadBoxActiveBlue {
+  border-color: #3B82F6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.uploadBoxActiveGreen {
+  border-color: #22C55E;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.uploadIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  background: #1E293B;
+  color: #60A5FA;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.uploadBox:hover .uploadIcon {
+  transform: scale(1.1);
+}
+
+.uploadIconActiveBlue {
+  background: #2563EB;
+  color: white;
+}
+
+.uploadIconActiveGreen {
+  background: #16A34A;
+  color: white;
+}
+
+.uploadTitle {
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.uploadSubtitle {
+  font-size: 0.75rem;
+  color: #94A3B8;
+  margin-bottom: 1rem;
+}
+
+.uploadBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #60A5FA;
+}
+
+.uploadBadgeActiveBlue {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #60A5FA;
+}
+
+.uploadBadgeActiveGreen {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ADE80;
+}
+
+.flexButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.successCircle {
+  width: 96px;
+  height: 96px;
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ADE80;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem auto;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  animation: bounce 2s infinite;
+}
+
+.successTitle {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.successText {
+  color: #94A3B8;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+  50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes scale-in {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.scaleIn {
+  animation: scale-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.loadingContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #F8FAFC;
+  gap: 1rem;
+}
+
+.loadingText {
+  color: #475569;
+  font-weight: 500;
+}
+
+.errorContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F8FAFC;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.errorCard {
+  max-width: 28rem;
+  width: 100%;
+  background: white;
+  border-radius: 32px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #FEF2F2;
+}
+
+.errorIcon {
+  width: 80px;
+  height: 80px;
+  background: #FEF2F2;
+  color: #EF4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto;
+}
+
+.errorTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0F172A;
+  margin-bottom: 0.5rem;
+}
+
+.errorText {
+  color: #64748B;
+  margin-bottom: 2rem;
+  line-height: 1.625;
+}
+
+.errorBtn {
+  width: 100%;
+  background: #0F172A;
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.errorBtn:hover {
+  background: #1E293B;
+}

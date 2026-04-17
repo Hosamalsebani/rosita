@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🩺 Roshita (روشتة) - Smart Medical Care Platform
 
-## Getting Started
+![Roshita Banner](public/clinical-sanctuary-bg.png)
 
-First, run the development server:
+Roshita is a world-class, cloud-based healthcare management platform designed to bridge the gap between patients, doctors, and pharmacists. Built with a focus on a **"Clinical Sanctuary"** aesthetic and premium user experience, it provides a seamless end-to-end medical workflow.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **🌐 Public Landing Page:** A high-end marketing interface showcasing services and trust indicators.
+- **🛡️ Multi-Role Dashboard:** Custom-tailored portals for Administrators, Doctors, and Pharmacists.
+- **📱 Real-time Synchronization:** Instant updates across mobile and web platforms using Supabase Realtime.
+- **📋 Smart Prescriptions:** Digital prescription management and fulfillment.
+- **📅 Appointment Management:** Integrated scheduling and consultation management.
+- **🔒 Enterprise Security:** 256-bit encryption and secure role-based access control.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🚀 Technology Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Styling:** Vanilla CSS + Tailwind CSS (where applicable)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Backend/DB:** [Supabase](https://supabase.com/) (PostgreSQL + Realtime)
+- **Icons:** [Lucide React](https://lucide.dev/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Getting Started
 
-## Deploy on Vercel
+### Prerequisites
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Node.js 18.x or higher
+- A Supabase Project (URL and Anon/Service Keys)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/roshita-web.git
+   cd roshita-web
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env.local` file with:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📂 Project Structure
+
+- `/src/app`: Next.js App Router pages and layouts.
+- `/src/components`: Reusable UI components.
+- `/src/lib`: Shared utilities and Supabase client.
+- `/public`: Assets, logos, and premium imagery.
+
+---
+
+## 📄 License
+
+© 2026 Roshita Inc. All rights reserved. Created for World-Class Medical Excellence.

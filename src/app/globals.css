@@ -1,32 +1,59 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #00abc2;
+  --primary-light: #33ccdf;
+  --primary-dark: #00899a;
+  
+  --secondary: #1a1a2e;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+  
+  --bg-main: #f8fafb; /* Soft light theme */
+  --bg-surface: rgba(255, 255, 255, 0.85); /* For Glassmorphism */
+  
+  --danger: #e74c3c;
+  --success: #2ecc71;
+  --warning: #f1c40f;
+  
+  --border-radius: 8px; /* Round Eight */
+  --border-radius-lg: 16px;
+  
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0, 171, 194, 0.1);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.1);
+  
+  /* Glassmorphism Effect */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --glass-blur: blur(12px);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-main: #121212;
+    --text-main: #f5f6fa;
+    --text-muted: #a4b0be;
+    --bg-surface: rgba(30, 30, 30, 0.85);
+    
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+    --glass-bg: rgba(30, 30, 30, 0.7);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
   }
-}
-
-html {
-  height: 100%;
 }
 
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  direction: rtl; /* Roshita is primarily Arabic */
 }
 
 body {
-  min-height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-tajawal), var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -40,10 +67,93 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+  transition: opacity 0.3s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+a:hover {
+  opacity: 0.8;
+}
+
+main {
+  flex-grow: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Base utility classes for layout */
+.glass-panel {
+  background: var(--glass-bg);
+  border-radius: var(--border-radius-lg);
+  border: var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur); /* Safari */
+  box-shadow: var(--shadow-md);
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 171, 194, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 6px 16px rgba(0, 171, 194, 0.4);
+  transform: scale(1.02);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--text-muted);
+}
+
+.btn-secondary:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Page Headers */
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
 }
