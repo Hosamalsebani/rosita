@@ -21,6 +21,11 @@ ADD COLUMN IF NOT EXISTS "documents" JSONB DEFAULT '[]';
 -- Update existing users to APPROVED
 UPDATE public."User" SET "status" = 'APPROVED' WHERE "status" IS NULL;
 
+-- 2.1 Update DoctorProfile Table with new fields
+ALTER TABLE public."DoctorProfile"
+ADD COLUMN IF NOT EXISTS "languages" TEXT[] DEFAULT '{Arabic, English}',
+ADD COLUMN IF NOT EXISTS "has_american_board" BOOLEAN DEFAULT FALSE;
+
 -- 3. Create Invitations Table
 CREATE TABLE IF NOT EXISTS public."Invitations" (
   "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),

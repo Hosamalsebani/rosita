@@ -137,6 +137,9 @@ export async function completeOnboardingAction(params: {
   phone: string;
   specialization: string;
   documents: string[];
+  avatarUrl?: string;
+  languages?: string[];
+  hasAmericanBoard?: boolean;
 }) {
   try {
     // 1. Verify token again
@@ -166,6 +169,24 @@ export async function completeOnboardingAction(params: {
       .eq('email', params.email);
 
     if (updateError) throw updateError;
+
+    // 3.1 Update the DoctorProfile record with avatar, languages, and board status
+    const { error: profileError } = await supabase
+      .from('DoctorProfile')
+      .update({
+        avatarUrl: params.avatarUrl,
+        academicInfo: {
+          languages: params.languages || ['Arabic', 'English'],
+          hasAmericanBoard: params.hasAmericanBoard || false,
+        },
+        // Also update top level columns if we added them
+        languages: params.languages || ['Arabic', 'English'],
+        has_american_board: params.hasAmericanBoard || false,
+      })
+      .eq('userId', result.data.id || result.data.user_id); // The RPC should return user id
+
+    // Note: If DoctorProfile doesn't exist yet, it will be created by the app or trigger
+    // But we try to update it here for immediate sync.
 
     // 4. (Optional) Delete the invitation so it can't be reused
     await supabase.from('Invitations').delete().eq('token', params.token);

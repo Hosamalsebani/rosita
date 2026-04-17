@@ -39,9 +39,15 @@ export default function DoctorInvitePage() {
   // File Upload State
   const [licenseFile, setLicenseFile] = useState<File | null>(null);
   const [idFile, setIdFile] = useState<File | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const licenseInputRef = React.useRef<HTMLInputElement>(null);
   const idInputRef = React.useRef<HTMLInputElement>(null);
+  const avatarInputRef = React.useRef<HTMLInputElement>(null);
   const [uploadStatus, setUploadStatus] = useState('');
+
+  // Pro Info State
+  const [languages, setLanguages] = useState<string[]>(['Arabic', 'English']);
+  const [hasAmericanBoard, setHasAmericanBoard] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [step, setStep] = useState(1); // 1: Info, 2: Documents, 3: Success
@@ -94,7 +100,20 @@ export default function DoctorInvitePage() {
         }
       }
 
-      // ── Step 2: Create Auth user via RPC (SECURITY DEFINER - bypasses client restrictions) ─
+      // ── Step 1b: Upload Avatar if provided ──────────────────────────
+      let avatarUrl = '';
+      if (avatarFile) {
+        setUploadStatus('جاري رفع الصورة الشخصية...');
+        const ext = avatarFile.name.split('.').pop();
+        const path = `avatars/${safeToken}_${timestamp}.${ext}`;
+        const { error: upErr } = await supabase.storage.from('avatars').upload(path, avatarFile);
+        if (!upErr) {
+          const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
+          avatarUrl = publicUrl;
+        }
+      }
+
+      // ── Step 2: Create Auth user via RPC ─────────────────────────────
       setUploadStatus('جاري إنشاء الحساب...');
       const { error: rpcError } = await supabase.rpc('create_staff_user', {
         p_email: invitation.email,
@@ -125,21 +144,24 @@ export default function DoctorInvitePage() {
       // ── Step 4: Mark invitation as used ──────────────────────────────
       await supabase.from('Invitations').delete().eq('token', token as string);
 
-      // ── Step 5: Sign in client-side and redirect to /doctor ──────────
-      setUploadStatus('جاري الدخول للوحة التحكم...');
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: invitation.email,
+      // ── Step 6: Finalize Onboarding with all fields ─────────────────
+      // We call the server action we updated
+      const { completeOnboardingAction } = await import('@/app/admin/doctors/actions');
+      await completeOnboardingAction({
+        token: token as string,
+        fullName,
         password,
+        email: invitation.email,
+        phone,
+        specialization: invitation.specialization,
+        documents: uploadedDocs,
+        avatarUrl,
+        languages,
+        hasAmericanBoard
       });
 
-      if (signInError) {
-        // Account created but auto-login failed (e.g. email confirmation required)
-        console.warn('Auto sign-in failed:', signInError.message);
-        setStep(3); // Show success page with manual login button
-      } else {
-        // ✅ Redirect directly to Doctor dashboard
-        router.push('/doctor');
-      }
+      // ✅ Redirect directly to Doctor dashboard
+      router.push('/doctor');
 
     } catch (err: any) {
       console.error('Onboarding error:', err);
@@ -207,6 +229,40 @@ export default function DoctorInvitePage() {
 
         {step === 1 && (
           <form onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
+            
+            {/* Profile Picture Upload */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
+               <input 
+                 type="file" 
+                 ref={avatarInputRef} 
+                 style={{ display: 'none' }}
+                 accept="image/*"
+                 onChange={(e) => {
+                   if (e.target.files && e.target.files[0]) {
+                     setAvatarFile(e.target.files[0]);
+                   }
+                 }}
+               />
+               <div 
+                 onClick={() => avatarInputRef.current?.click()}
+                 style={{ 
+                   width: 100, height: 100, borderRadius: '50%', 
+                   background: '#F1F5F9', border: '2px dashed #CBD5E1',
+                   display: 'flex', alignItems: 'center', justifyContent: 'center',
+                   cursor: 'pointer', overflow: 'hidden', position: 'relative'
+                 }}
+               >
+                 {avatarFile ? (
+                   <img src={URL.createObjectURL(avatarFile)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                 ) : (
+                   <div style={{ textAlign: 'center', color: '#64748B' }}>
+                     <Upload size={24} />
+                     <div style={{ fontSize: 10, marginTop: 4 }}>الصورة الشخصية</div>
+                   </div>
+                 )}
+               </div>
+            </div>
+
             <div className={styles.formGroup}>
               <label className={styles.label}>
                 <User size={16} />
@@ -274,6 +330,58 @@ export default function DoctorInvitePage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
+            </div>
+
+            {/* Languages and Board */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+               <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <ShieldCheck size={16} color="#2563EB" />
+                    البورد الأمريكي
+                  </label>
+                  <div 
+                    onClick={() => setHasAmericanBoard(!hasAmericanBoard)}
+                    style={{ 
+                      padding: '12px', borderRadius: 12, border: '1px solid #E2E8F0',
+                      background: hasAmericanBoard ? '#EFF6FF' : '#fff',
+                      display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{ 
+                      width: 20, height: 20, borderRadius: 6, 
+                      border: '2px solid #2563EB', 
+                      background: hasAmericanBoard ? '#2563EB' : 'transparent',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      {hasAmericanBoard && <Check size={14} color="#fff" />}
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: hasAmericanBoard ? '#1E40AF' : '#64748B' }}>
+                      حاصل عليه
+                    </span>
+                  </div>
+               </div>
+               
+               <div className={styles.formGroup}>
+                  <label className={styles.label}>
+                    <User size={16} />
+                    اللغات
+                  </label>
+                  <select 
+                    multiple
+                    className={styles.input}
+                    style={{ height: 'auto', padding: '8px' }}
+                    value={languages}
+                    onChange={(e) => {
+                      const values = Array.from(e.target.selectedOptions, option => option.value);
+                      setLanguages(values);
+                    }}
+                  >
+                    <option value="Arabic">العربية</option>
+                    <option value="English">الإنجليزية</option>
+                    <option value="French">الفرنسية</option>
+                    <option value="Italian">الإيطالية</option>
+                  </select>
+               </div>
             </div>
 
             <button type="submit" className={styles.btnPrimary}>
