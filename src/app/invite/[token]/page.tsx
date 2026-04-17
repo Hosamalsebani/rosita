@@ -117,41 +117,17 @@ export default function DoctorInvitePage() {
         }
       }
 
-      // ── Step 2: Create Auth user via RPC ─────────────────────────────
-      setUploadStatus('جاري إنشاء الحساب...');
-      const { error: rpcError } = await supabase.rpc('create_staff_user', {
-        p_email: invitation.email,
-        p_password: password,
-        p_name: fullName,
-        p_role: 'DOCTOR',
-      });
-
-      if (rpcError) {
-        // If user already exists, proceed to login anyway
-        if (!rpcError.message?.includes('duplicate') && !rpcError.message?.includes('already')) {
-          throw new Error('فشل إنشاء الحساب: ' + rpcError.message);
-        }
-      }
-
-      // ── Step 3: Update User record with specialization + documents ────
-      setUploadStatus('جاري حفظ البيانات...');
-      await supabase
-        .from('User')
-        .update({
-          phone,
-          specialization: invitation.specialization,
-          status: 'approved',
-          documents: uploadedDocs,
-        })
-        .eq('email', invitation.email);
-
-      // ── Step 4: Mark invitation as used ──────────────────────────────
-      await supabase.from('Invitations').delete().eq('token', token as string);
-
-      // ── Step 6: Finalize Onboarding with all fields ─────────────────
-      // We call the server action we updated
+      // ── Step 2: Finalize Everything via Server Action ─────────────
+      // We use a single Server Action (completeOnboardingAction) to:
+      // 1. Verify token
+      // 2. Create Auth user (if not exists)
+      // 3. Update User table with documents & status (bypassing RLS)
+      // 4. Update DoctorProfile
+      // 5. Delete invitation token
+      setUploadStatus('جاري إعداد حسابك الطبي...');
+      
       const { completeOnboardingAction } = await import('@/app/admin/doctors/actions');
-      await completeOnboardingAction({
+      const response = await completeOnboardingAction({
         token: token as string,
         fullName,
         password,
@@ -164,7 +140,11 @@ export default function DoctorInvitePage() {
         hasAmericanBoard
       });
 
-      // ✅ Redirect directly to Doctor dashboard
+      if (!response.success) {
+        throw new Error(response.error || "فشل إكمال عملية التسجيل");
+      }
+
+      // ✅ Success - Redirect directly to Doctor dashboard
       router.push('/doctor');
 
     } catch (err: any) {

@@ -196,8 +196,27 @@ export async function completeOnboardingAction(params: {
     // Note: If DoctorProfile doesn't exist yet, it will be created by the app or trigger
     // But we try to update it here for immediate sync.
 
-    // 4. (Optional) Delete the invitation so it can't be reused
-    await supabase.from('Invitations').delete().eq('token', params.token);
+    // 3. Update the User record with specialization and status
+    console.log(`Saving ${params.documents?.length || 0} documents for ${params.email}...`);
+    const { error: updateError } = await supabaseAdmin
+      .from('User')
+      .update({
+        specialization: params.specialization,
+        phone: params.phone,
+        status: 'APPROVED',
+        documents: params.documents || []
+      })
+      .eq('email', params.email);
+
+    if (updateError) {
+      console.error("Critical: Failed to save documents to User table!", updateError);
+      throw updateError;
+    }
+
+    console.log("Documents saved successfully.");
+
+    // 4. Delete the invitation so it can't be reused
+    await supabaseAdmin.from('Invitations').delete().eq('token', params.token);
 
     return { success: true };
   } catch (error: any) {
