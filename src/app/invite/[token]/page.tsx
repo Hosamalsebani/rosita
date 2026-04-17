@@ -87,20 +87,25 @@ export default function DoctorInvitePage() {
       const safeToken = String(token).substring(0, 8);
       const uploadedDocs: string[] = [];
 
+      const { uploadFileSecurelyServer, completeOnboardingAction } = await import('@/app/admin/doctors/actions');
+
       for (const [file, folder] of [[licenseFile, 'licenses'], [idFile, 'ids']] as [File, string][]) {
         const ext = file.name.split('.').pop();
         const path = `${folder}/${safeToken}_${timestamp}.${ext}`;
         
-        console.log(`Uploading ${folder} to path ${path}...`);
-        const { error: upErr } = await supabase.storage.from('doctor-documents').upload(path, file);
+        console.log(`Uploading ${folder} securely...`);
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('path', path);
+        fd.append('bucket', 'doctor-documents');
+
+        const res = await uploadFileSecurelyServer(fd);
         
-        if (upErr) {
-          console.error(`Upload error for ${folder}:`, upErr.message, upErr);
-          // Fallback: we try to use a placeholder URL if it fails, but ideally this shouldn't fail
+        if (!res.success) {
+          console.error(`Secure upload error for ${folder}:`, res.error);
         } else {
-          const { data: { publicUrl } } = supabase.storage.from('doctor-documents').getPublicUrl(path);
-          console.log(`Upload success for ${folder}. URL: ${publicUrl}`);
-          uploadedDocs.push(publicUrl);
+          console.log(`Secure upload success for ${folder}. URL: ${res.url}`);
+          uploadedDocs.push(res.url as string);
         }
       }
 
@@ -109,11 +114,16 @@ export default function DoctorInvitePage() {
       if (avatarFile) {
         setUploadStatus('جاري رفع الصورة الشخصية...');
         const ext = avatarFile.name.split('.').pop();
-        const path = `avatars/${safeToken}_${timestamp}.${ext}`;
-        const { error: upErr } = await supabase.storage.from('avatars').upload(path, avatarFile);
-        if (!upErr) {
-          const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
-          avatarUrl = publicUrl;
+        const path = `${safeToken}_${timestamp}.${ext}`;
+        
+        const fd = new FormData();
+        fd.append('file', avatarFile);
+        fd.append('path', path);
+        fd.append('bucket', 'avatars');
+
+        const res = await uploadFileSecurelyServer(fd);
+        if (res.success) {
+          avatarUrl = res.url as string;
         }
       }
 
@@ -126,7 +136,6 @@ export default function DoctorInvitePage() {
       // 5. Delete invitation token
       setUploadStatus('جاري إعداد حسابك الطبي...');
       
-      const { completeOnboardingAction } = await import('@/app/admin/doctors/actions');
       const response = await completeOnboardingAction({
         token: token as string,
         fullName,

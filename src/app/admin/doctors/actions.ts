@@ -4,6 +4,33 @@ import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import crypto from 'crypto';
 
+export async function uploadFileSecurelyServer(formData: FormData) {
+  try {
+    const file = formData.get('file') as File;
+    const path = formData.get('path') as string;
+    const bucket = formData.get('bucket') as string;
+
+    if (!file || !path || !bucket) throw new Error("Missing file parameters");
+
+    // Convert File to Buffer/ArrayBuffer for Supabase Admin
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
+    const { error: upErr } = await supabaseAdmin.storage.from(bucket).upload(path, buffer, {
+      contentType: file.type,
+      upsert: true
+    });
+
+    if (upErr) throw upErr;
+
+    const { data: { publicUrl } } = supabaseAdmin.storage.from(bucket).getPublicUrl(path);
+    return { success: true, url: publicUrl };
+  } catch (error: any) {
+    console.error("Secure upload error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 export async function fetchDoctorsServer() {
   try {
     const { data: usersData, error: usersError } = await supabaseAdmin
