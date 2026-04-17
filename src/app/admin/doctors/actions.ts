@@ -197,3 +197,67 @@ export async function completeOnboardingAction(params: {
     return { success: false, error: error?.message || 'Onboarding failed' };
   }
 }
+
+export async function banDoctorAction(userId: string) {
+  try {
+    const { error } = await supabase
+      .from('User')
+      .update({ status: 'SUSPENDED' })
+      .eq('id', userId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error("banDoctorAction error:", error);
+    return { success: false, error: error?.message || 'Failed to ban doctor' };
+  }
+}
+
+export async function unbanDoctorAction(userId: string) {
+  try {
+    const { error } = await supabase
+      .from('User')
+      .update({ status: 'APPROVED' })
+      .eq('id', userId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error("unbanDoctorAction error:", error);
+    return { success: false, error: error?.message || 'Failed to unban doctor' };
+  }
+}
+
+export async function deleteDoctorAction(userId: string) {
+  try {
+    // 1. Delete profile first if exists (foreign key constraint might exist)
+    await supabase.from('DoctorProfile').delete().eq('userId', userId);
+    
+    // 2. Delete user
+    const { error } = await supabase
+      .from('User')
+      .delete()
+      .eq('id', userId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error("deleteDoctorAction error:", error);
+    return { success: false, error: error?.message || 'Failed to delete doctor' };
+  }
+}
+
+export async function updateDoctorAction(userId: string, data: any) {
+  try {
+    const { error } = await supabase
+      .from('User')
+      .update(data)
+      .eq('id', userId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error("updateDoctorAction error:", error);
+    return { success: false, error: error?.message || 'Failed to update doctor' };
+  }
+}

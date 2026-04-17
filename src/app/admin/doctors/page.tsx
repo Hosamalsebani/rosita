@@ -10,18 +10,26 @@ import {
   ShieldCheck, Lock, Copy, Check, X, Download, Eye, EyeOff
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { fetchDoctorsServer, createDoctorServer, inviteDoctorAction } from './actions';
+import { 
+  fetchDoctorsServer, 
+  createDoctorServer, 
+  inviteDoctorAction,
+  banDoctorAction,
+  unbanDoctorAction,
+  deleteDoctorAction 
+} from './actions';
 import { MEDICAL_SPECIALIZATIONS } from './specializations';
 
 type Doctor = {
-  id: number;
+  id: string; // Changed to string as Supabase uses UUID/String for ID mostly
   name: string;
   specialty: string;
   phone: string;
   medicalId: string;
   password?: string;
   joined: string;
-  status: 'active' | 'pending';
+  status: string;
+  documents?: string[];
 }
 
 const initialDoctors: Doctor[] = [
@@ -65,11 +73,12 @@ function DoctorsContent() {
       const mappedDoctors: Doctor[] = usersData.map((u: any) => ({
         id: u.id,
         name: u.name || 'غير محدد',
-        specialty: 'طبيب عام', // Defaulting as specialty is currently handled loosely in User or Profile
+        specialty: u.specialization || 'طبيب عام',
         phone: u.phone || 'غير مسجل',
         medicalId: u.email,
         joined: new Date(u.createdAt).toISOString().split('T')[0],
-        status: 'active'
+        status: u.status,
+        documents: u.documents || []
       }));
 
       setDoctors(mappedDoctors);
@@ -159,10 +168,51 @@ function DoctorsContent() {
       key: 'actions', header: lang === 'ar' ? 'الإجراءات' : 'Actions',
       render: (row: any) => (
         <div style={{ display: 'flex', gap: 8 }}>
+          {/* View Documents Button */}
+          {row.documents && row.documents.length > 0 && (
+            <button 
+              onClick={() => {
+                // Open first document as a shortcut or show list? For now just open first
+                const docUrl = row.documents[0];
+                if (docUrl) window.open(docUrl, '_blank');
+              }}
+              title={lang === 'ar' ? 'عرض المستندات' : 'View Documents'}
+              style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#F0F9FF', color: '#0369A1', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <FileText size={14} />
+            </button>
+          )}
+
           <button style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#F1F5F9', color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Edit2 size={14} />
           </button>
-          <button style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#FEF2F2', color: '#DC2626', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+
+          {/* Ban/Unban Button */}
+          <button 
+            onClick={async () => {
+              if (!confirm(lang === 'ar' ? 'هل أنت متأكد من تغيير حالة هذا الطبيب؟' : 'Are you sure you want to change this doctor\'s status?')) return;
+              const action = row.status === 'SUSPENDED' ? unbanDoctorAction : banDoctorAction;
+              const res = await action(row.id);
+              if (res.success) fetchDoctors();
+              else alert(res.error);
+            }}
+            title={row.status === 'SUSPENDED' ? (lang === 'ar' ? 'إلغاء الحظر' : 'Unban') : (lang === 'ar' ? 'حظر الطبيب' : 'Ban Doctor')}
+            style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: row.status === 'SUSPENDED' ? '#ECFDF5' : '#FFF7ED', color: row.status === 'SUSPENDED' ? '#059669' : '#D97706', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            {row.status === 'SUSPENDED' ? <ShieldCheck size={14} /> : <Shield size={14} />}
+          </button>
+
+          {/* Delete Button */}
+          <button 
+            onClick={async () => {
+              if (!confirm(lang === 'ar' ? 'تحذير: سيتم مسح كافة بيانات الطبيب نهائياً. هل أنت متأكد؟' : 'Warning: All doctor data will be permanently deleted. Are you sure?')) return;
+              const res = await deleteDoctorAction(row.id);
+              if (res.success) fetchDoctors();
+              else alert(res.error);
+            }}
+            title={lang === 'ar' ? 'مسح البيانات' : 'Delete Data'}
+            style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#FEF2F2', color: '#DC2626', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
             <Trash2 size={14} />
           </button>
         </div>
