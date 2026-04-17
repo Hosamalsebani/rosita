@@ -33,9 +33,9 @@ type Doctor = {
 }
 
 const initialDoctors: Doctor[] = [
-  { id: 1, name: 'د. محمود القاضي', specialty: 'طب أعصاب', phone: '091-8887766', medicalId: 'DOC-9921', joined: '2026-01-20', status: 'active' },
-  { id: 2, name: 'د. فاطمة الزهراء', specialty: 'طب أطفال', phone: '092-1112233', medicalId: 'DOC-4452', joined: '2026-03-12', status: 'active' },
-  { id: 3, name: 'د. خالد الورفلي', specialty: 'جراحة عامة', phone: '094-5554433', medicalId: 'DOC-7781', joined: '2026-04-01', status: 'pending' },
+  { id: '1', name: 'د. محمود القاضي', specialty: 'طب أعصاب', phone: '091-8887766', medicalId: 'DOC-9921', joined: '2026-01-20', status: 'active' },
+  { id: '2', name: 'د. فاطمة الزهراء', specialty: 'طب أطفال', phone: '092-1112233', medicalId: 'DOC-4452', joined: '2026-03-12', status: 'active' },
+  { id: '3', name: 'د. خالد الورفلي', specialty: 'جراحة عامة', phone: '094-5554433', medicalId: 'DOC-7781', joined: '2026-04-01', status: 'pending' },
 ];
 
 function DoctorsContent() {
